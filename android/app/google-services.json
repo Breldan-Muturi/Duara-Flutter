@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "170248896011",
+    "firebase_url": "https://duara-20f61.firebaseio.com",
+    "project_id": "duara-20f61",
+    "storage_bucket": "duara-20f61.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:170248896011:android:6fcbc058f81f5effb0510e",
+        "android_client_info": {
+          "package_name": "com.turi.duara"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "170248896011-lj13dg6mcu2kmv348pcnip1vf87a3u7d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.turi.duara",
+            "certificate_hash": "6647d617094e928c20ccecd4a93ed23edb46b68e"
+          }
+        },
+        {
+          "client_id": "170248896011-7881hpq4lons614r65uddu4lqri8kd3n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-5IkfbBovYdh524gnNXVjwHdgMg_nmxY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "170248896011-7881hpq4lons614r65uddu4lqri8kd3n.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "170248896011-im26i59jc0bh4ca6e6s7i93g1e9ve8t1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.turi.duara"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
