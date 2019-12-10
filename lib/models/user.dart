@@ -4,27 +4,27 @@ class User {
   final String id;
   final String username;
   final String email;
-  final String bio;
-  final String displayName;
   final String photoUrl;
+  final String displayName;
+  final String bio;
 
   User({
     this.id,
     this.username,
     this.email,
-    this.bio,
-    this.displayName,
     this.photoUrl,
+    this.displayName,
+    this.bio,
   });
 
   factory User.fromDocument(DocumentSnapshot doc) {
     return User(
       id: doc['id'],
-      username: doc['username'],
       email: doc['email'],
-      bio: doc['bio'],
-      displayName: doc['displayName'],
+      username: doc['username'],
       photoUrl: doc['photoUrl'],
+      displayName: doc['displayName'],
+      bio: doc['bio'],
     );
   }
 }
