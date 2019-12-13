@@ -119,12 +119,16 @@ class _PostState extends State<Post> {
           ),
           subtitle: Text(location),
           trailing: IconButton(
-            onPressed: () => print('deleting post'),
+            onPressed: handleDeletePost(context),
             icon: Icon(Icons.more_vert),
           ),
         );
       },
     );
+  }
+
+  handleDeletePost(BuildContext parentContext) {
+    // return showDialog();
   }
 
   handleLikePost(){
@@ -204,21 +208,21 @@ class _PostState extends State<Post> {
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          cachedNetworkImage(mediaUrl),
-          showHeart ? Animator(
-            duration: Duration(milliseconds: 400),
-            tween: Tween(begin: 0.8, end:  1.4),
-            curve: Curves.elasticOut,
-            cycles: 0,
-            builder: (anim) => Transform.scale(
-              scale: anim.value,
-              child: Icon(
-                Icons.favorite,
-                size: 200.0,
-                color:Colors.red.withOpacity(0.6),
-              )
-            ),
-          ) : Text(""),
+          // cachedNetworkImage(mediaUrl),
+          // showHeart ? Animator(
+          //   duration: Duration(milliseconds: 400),
+          //   tween: Tween(begin: 0.8, end:  1.4),
+          //   curve: Curves.elasticOut,
+          //   cycles: 0,
+          //   builder: (anim) => Transform.scale(
+          //     scale: anim.value,
+          //     child: Icon(
+          //       Icons.favorite,
+          //       size: 200.0,
+          //       color:Colors.red.withOpacity(0.6),
+          //     )
+          //   ),
+          // ) : Text(""),
           // showHeart ? Icon(Icons.favorite, size: 200.0,
           //  color:Colors.red.withOpacity(0.6),) :
           // Text(""),

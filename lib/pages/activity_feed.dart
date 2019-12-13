@@ -16,14 +16,15 @@ class ActivityFeed extends StatefulWidget {
 class _ActivityFeedState extends State<ActivityFeed> {
   getActivityFeed() async {
     QuerySnapshot snapshot = await activityFeedRef
-      .document(currentUser.id)
-      .collection('feedItems')
-      .orderBy('timestamp', descending: true)
-      .limit(50)
-      .getDocuments();
+        .document(currentUser.id)
+        .collection('feedItems')
+        .orderBy('timestamp', descending: true)
+        .limit(50)
+        .getDocuments();
     List<ActivityFeedItem> feedItems = [];
-    snapshot.documents.forEach((doc){
+    snapshot.documents.forEach((doc) {
       feedItems.add(ActivityFeedItem.fromDocument(doc));
+      // print('Activity Feed Item: ${doc.data}');
     });
     return feedItems;
   }
@@ -31,31 +32,20 @@ class _ActivityFeedState extends State<ActivityFeed> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Colors.orange,
       appBar: header(context, titleText: "Activity Feed"),
-      body:Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [
-              Theme.of(context).accentColor,
-              Theme.of(context).primaryColor,
-            ],
-          ),
-        ),
-        child: FutureBuilder(
-          future: getActivityFeed(),
-          builder: (context,snapshot) {
-            if (!snapshot.hasData) {
-              return circularProgress();
-            }
-            return ListView(
-              children: snapshot.data,
-            );
-          },
-        ),
-      ),
+      body: Container(
+          child: FutureBuilder(
+        future: getActivityFeed(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return circularProgress();
+          }
+          return ListView(
+            children: snapshot.data,
+          );
+        },
+      )),
     );
   }
 }
@@ -66,17 +56,17 @@ String activityItemText;
 class ActivityFeedItem extends StatelessWidget {
   final String username;
   final String userId;
-  final String type; //like, follow, comment, message
+  final String type; // 'like', 'follow', 'comment'
   final String mediaUrl;
   final String postId;
   final String userProfileImg;
   final String commentData;
   final Timestamp timestamp;
 
-  ActivityFeedItem ({
+  ActivityFeedItem({
     this.username,
     this.userId,
-    this.type, //like, follow, comment, message
+    this.type,
     this.mediaUrl,
     this.postId,
     this.userProfileImg,
@@ -89,61 +79,64 @@ class ActivityFeedItem extends StatelessWidget {
       username: doc['username'],
       userId: doc['userId'],
       type: doc['type'],
-      mediaUrl: doc['mediaUrl'],
       postId: doc['postId'],
       userProfileImg: doc['userProfileImg'],
       commentData: doc['commentData'],
       timestamp: doc['timestamp'],
+      mediaUrl: doc['mediaUrl'],
     );
   }
 
-  showPost(context){
+  showPost(context) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PostScreen(
-          postId: postId, 
+          postId: postId,
           userId: userId,
-    )));
+        ),
+      ),
+    );
   }
 
-  configureMediaPreview(context){
-    if(type == "like" ||type == "comment") {
+  configureMediaPreview(context) {
+    if (type == "like" || type == 'comment') {
       mediaPreview = GestureDetector(
         onTap: () => showPost(context),
         child: Container(
           height: 50.0,
           width: 50.0,
           child: AspectRatio(
-            aspectRatio: 16 / 9,
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: CachedNetworkImageProvider(mediaUrl),
+              aspectRatio: 16 / 9,
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: CachedNetworkImageProvider(mediaUrl),
+                  ),
                 ),
-              ),
-            ),
-          ),
+              )),
         ),
       );
     } else {
-      mediaPreview = Text("");
+      mediaPreview = Text('');
     }
-    if (type == "like") {
-      activityItemText = "liked your Post";
-    } else if ( type == "follow") {
+
+    if (type == 'like') {
+      activityItemText = "liked your post";
+    } else if (type == 'follow') {
       activityItemText = "is following you";
-    } else if ( type == "comment") {
-      activityItemText = " replied: $commentData";
+    } else if (type == 'comment') {
+      activityItemText = 'replied: $commentData';
     } else {
-      activityItemText = "Error: unKnown type '$type' ";
+      activityItemText = "Error: Unknown type '$type'";
     }
   }
 
   @override
   Widget build(BuildContext context) {
     configureMediaPreview(context);
+
     return Padding(
       padding: EdgeInsets.only(bottom: 2.0),
       child: Container(
@@ -154,20 +147,19 @@ class ActivityFeedItem extends StatelessWidget {
             child: RichText(
               overflow: TextOverflow.ellipsis,
               text: TextSpan(
-                style: TextStyle(
-                  fontSize: 14.0,
-                  color: Colors.black,
-                ),
-                children: [
-                  TextSpan(
-                    text: username,
-                    style: TextStyle(fontWeight: FontWeight.bold)
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.black,
                   ),
-                  TextSpan(
-                    text: ' $activityItemText',
-                  ),
-                ],
-              ),
+                  children: [
+                    TextSpan(
+                      text: username,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(
+                      text: ' $activityItemText',
+                    ),
+                  ]),
             ),
           ),
           leading: CircleAvatar(
