@@ -71,7 +71,7 @@ class CommentsState extends State<Comments> {
       activityFeedRef.document(postOwnerId).collection('feedItems').add({
         "type": "comment",
         "commentData": commentController.text,
-        "timestamp": timestamp,
+        "timestamp": timestamp, 
         "postId": postId,
         "userId": currentUser.id,
         "username": currentUser.username,

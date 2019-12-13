@@ -93,7 +93,7 @@ class _PostState extends State<Post> {
     this.likes,
     this.likeCount,
   });
-  
+
   buildPostHeader() {
     return FutureBuilder(
       future: usersRef.document(ownerId).get(),
