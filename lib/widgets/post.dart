@@ -1,15 +1,15 @@
 import 'dart:async';
-import 'package:fluttershare/pages/activity_feed.dart';
+
 import 'package:animator/animator.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttershare/models/user.dart';
+import 'package:fluttershare/pages/activity_feed.dart';
 import 'package:fluttershare/pages/comments.dart';
 import 'package:fluttershare/pages/home.dart';
 import 'package:fluttershare/widgets/custom_image.dart';
 import 'package:fluttershare/widgets/progress.dart';
-
 
 class Post extends StatefulWidget {
   final String postId;
@@ -75,7 +75,7 @@ class _PostState extends State<Post> {
   final String postId;
   final String ownerId;
   final String username;
-  final String location;  
+  final String location;
   final String description;
   final String mediaUrl;
   bool showHeart = false;
@@ -93,7 +93,7 @@ class _PostState extends State<Post> {
     this.likes,
     this.likeCount,
   });
-
+  
   buildPostHeader() {
     return FutureBuilder(
       future: usersRef.document(ownerId).get(),
@@ -102,6 +102,7 @@ class _PostState extends State<Post> {
           return circularProgress();
         }
         User user = User.fromDocument(snapshot.data);
+        bool isPostOwner = currentUserId == ownerId;
         return ListTile(
           leading: CircleAvatar(
             backgroundImage: CachedNetworkImageProvider(user.photoUrl),
@@ -118,114 +119,175 @@ class _PostState extends State<Post> {
             ),
           ),
           subtitle: Text(location),
-          trailing: IconButton(
-            onPressed: handleDeletePost(context),
-            icon: Icon(Icons.more_vert),
-          ),
+          trailing: isPostOwner
+              ? IconButton(
+                  onPressed: () => handleDeletePost(context),
+                  icon: Icon(Icons.more_vert),
+                )
+              : Text(''),
         );
       },
     );
   }
 
   handleDeletePost(BuildContext parentContext) {
-    // return showDialog();
+    return showDialog(
+      context: parentContext,
+      builder: (context) {
+        return SimpleDialog(title: Text("Remove this post?"),
+          children: <Widget>[
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context);
+                deletePost();  
+              },
+              child: Text("Delete",
+              style: TextStyle(color: Colors.red),
+              ),
+            ),
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Cancel"),
+            )
+          ],
+        );
+      }
+    );
   }
 
-  handleLikePost(){
-   bool _isLiked = likes[currentUserId] == true;
-   if (_isLiked) {
-     postsRef
+  //OwnerId must equal currentUserId for post to be deleted,
+  //meaning here in the fxn they cna be used interchangeably
+  deletePost() async {
+    //Delete the podt itself
+    postsRef  
       .document(ownerId)
       .collection('userPosts')
       .document(postId)
-      .updateData({'likes.$currentUserId': false});
+      .get().then((doc){
+        if (doc.exists) {
+          doc.reference.delete();
+        }
+      });
+    //delete uploaded image for the post
+    storageRef.child("post_$postId.jpg").delete();
+    //delete all activity feed notificatons
+    QuerySnapshot activityFeedSnapshot = await activityFeedRef
+      .document(ownerId)
+      .collection('feedItems')
+      .where('postId', isEqualTo:postId)
+      .getDocuments();
+    activityFeedSnapshot.documents.forEach((doc){
+      if ( doc.exists) {
+        doc.reference.delete();
+      }
+    });
+    //delete all comments
+    QuerySnapshot commentsSnapshot = await commentsRef
+      .document(postId)
+      .collection('comments')
+      .getDocuments();
+    commentsSnapshot.documents.forEach((doc){
+      if ( doc.exists) {
+        doc.reference.delete();
+      }
+    });
+  }
+
+  handleLikePost() {
+    bool _isLiked = likes[currentUserId] == true;
+
+    if (_isLiked) {
+      postsRef
+          .document(ownerId)
+          .collection('userPosts')
+          .document(postId)
+          .updateData({'likes.$currentUserId': false});
       removeLikeFromActivityFeed();
-     setState(() {
-       likeCount -= 1;
-       isLiked = false;
-       likes[currentUserId] = false;
-     });
-   } else if (!_isLiked ) {     
-     postsRef
-      .document(ownerId)
-      .collection('userPosts')
-      .document(postId)
-      .updateData({'likes.$currentUserId': true});
-    addLikeToActivityFeed();
-     setState(() {
-       likeCount += 1;
-       isLiked = true;
-       likes[currentUserId] = true;
-       showHeart = true;
-     });
-     Timer(Duration(milliseconds: 600), () {
-       setState(() {
-         showHeart = false;
-       });
-     });
-   }
+      setState(() {
+        likeCount -= 1;
+        isLiked = false;
+        likes[currentUserId] = false;
+      });
+    } else if (!_isLiked) {
+      postsRef
+          .document(ownerId)
+          .collection('userPosts')
+          .document(postId)
+          .updateData({'likes.$currentUserId': true});
+      addLikeToActivityFeed();
+      setState(() {
+        likeCount += 1;
+        isLiked = true;
+        likes[currentUserId] = true;
+        showHeart = true;
+      });
+      Timer(Duration(milliseconds: 500), () {
+        setState(() {
+          showHeart = false;
+        });
+      });
+    }
   }
 
   addLikeToActivityFeed() {
-    //only add notifications from other users other than the present user
+    // add a notification to the postOwner's activity feed only if comment made by OTHER user (to avoid getting notification for our own like)
     bool isNotPostOwner = currentUserId != ownerId;
     if (isNotPostOwner) {
       activityFeedRef
-        .document(ownerId)
-        .collection("feedItems")
-        .document(postId)
-        .setData({
-          "type": "like",
-          "username": currentUser.username,
-          "userId": currentUser.id,
-          "userProfileImg":currentUser.photoUrl,
-          "postId": postId,
-          "mediaUrl": mediaUrl,
-          "timestamp": timestamp,  
-        });
+          .document(ownerId)
+          .collection("feedItems")
+          .document(postId)
+          .setData({
+        "type": "like",
+        "username": currentUser.username,
+        "userId": currentUser.id,
+        "userProfileImg": currentUser.photoUrl,
+        "postId": postId,
+        "mediaUrl": mediaUrl,
+        "timestamp": timestamp,
+      });
     }
   }
 
   removeLikeFromActivityFeed() {
-    //only remove notifications from other users other than the present user
     bool isNotPostOwner = currentUserId != ownerId;
     if (isNotPostOwner) {
-    activityFeedRef
-      .document(ownerId)
-      .collection("feedItems")
-      .document(postId)
-      .get().then((doc){
-        if(doc.exists){
+      activityFeedRef
+          .document(ownerId)
+          .collection("feedItems")
+          .document(postId)
+          .get()
+          .then((doc) {
+        if (doc.exists) {
           doc.reference.delete();
         }
-      }); 
+      });
     }
   }
 
   buildPostImage() {
     return GestureDetector(
-      onDoubleTap: handleLikePost,      
+      onDoubleTap: handleLikePost,
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
           cachedNetworkImage(mediaUrl),
-          showHeart ? Animator(
-            duration: Duration(milliseconds: 400),
-            tween: Tween(begin: 0.8, end:  1.4),
-            curve: Curves.elasticOut,
-            cycles: 0,
-            builder: (anim) => Transform.scale(
-              scale: anim.value,
-              child: Icon(
-                Icons.favorite,
-                size: 200.0,
-                color:Colors.red.withOpacity(0.6),
-              )
-            ),
-          ) : Text(""),
-          // showHeart ? Icon(Icons.favorite, size: 200.0,
-          //  color:Colors.red.withOpacity(0.6),) :
-          // Text(""),
+          showHeart
+              ? Animator(
+                  duration: Duration(milliseconds: 300),
+                  tween: Tween(begin: 0.8, end: 1.4),
+                  curve: Curves.elasticOut,
+                  cycles: 0,
+                  builder: (anim) => Transform.scale(
+                    scale: anim.value,
+                    child: Icon(
+                      Icons.favorite,
+                      size: 80.0,
+                      color: Colors.red,
+                    ),
+                  ),
+                )
+              : Text(""),
         ],
       ),
     );
@@ -239,7 +301,7 @@ class _PostState extends State<Post> {
           children: <Widget>[
             Padding(padding: EdgeInsets.only(top: 40.0, left: 20.0)),
             GestureDetector(
-              onTap:  handleLikePost,
+              onTap: handleLikePost,
               child: Icon(
                 isLiked ? Icons.favorite : Icons.favorite_border,
                 size: 28.0,
@@ -282,7 +344,7 @@ class _PostState extends State<Post> {
             Container(
               margin: EdgeInsets.only(left: 20.0),
               child: Text(
-                "$username  ",
+                "$username ",
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -299,6 +361,7 @@ class _PostState extends State<Post> {
   @override
   Widget build(BuildContext context) {
     isLiked = (likes[currentUserId] == true);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -310,12 +373,13 @@ class _PostState extends State<Post> {
   }
 }
 
-showComments(BuildContext context, {String postId, String ownerId, String mediaUrl}) {
-  Navigator.push(context, MaterialPageRoute(builder: (context){
+showComments(BuildContext context,
+    {String postId, String ownerId, String mediaUrl}) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
     return Comments(
       postId: postId,
       postOwnerId: ownerId,
-      postMediaUrl: mediaUrl ,
+      postMediaUrl: mediaUrl,
     );
   }));
 }

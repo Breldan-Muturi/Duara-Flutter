@@ -50,9 +50,9 @@ class _HomeState extends State<Home> {
     });
   }
 
-  handleSignIn(GoogleSignInAccount account) async {
+  handleSignIn(GoogleSignInAccount account) {
     if (account != null) {
-      await createUserInFirestore();
+      createUserInFirestore();
       setState(() {
         isAuth = true;
       });
@@ -178,7 +178,7 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Duara',
+              'FlutterShare',
               style: TextStyle(
                 fontFamily: "Signatra",
                 fontSize: 90.0,

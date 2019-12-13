@@ -5,17 +5,21 @@ import 'package:fluttershare/widgets/post.dart';
 
 class PostTile extends StatelessWidget {
   final Post post;
+
   PostTile(this.post);
 
-  showPost(context){
+  showPost(context) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PostScreen(
-          postId: post.postId, 
-          userId: post.ownerId,
-    )));
+          postId: post.postId,
+          postUserId: post.ownerId,
+        ),
+      ),
+    );
   }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

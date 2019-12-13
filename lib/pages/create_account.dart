@@ -15,14 +15,14 @@ class _CreateAccountState extends State<CreateAccount> {
 
   submit() {
     final form = _formKey.currentState;
+
     if (form.validate()) {
       form.save();
-      SnackBar snackbar = SnackBar(content: Text("Welcome $username!"),);
+      SnackBar snackbar = SnackBar(content: Text("Welcome $username!"));
       _scaffoldKey.currentState.showSnackBar(snackbar);
-      Timer(Duration(seconds: 1), (){
+      Timer(Duration(seconds: 2), () {
         Navigator.pop(context, username);
       });
-
     }
   }
 
@@ -30,8 +30,8 @@ class _CreateAccountState extends State<CreateAccount> {
   Widget build(BuildContext parentContext) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: header(context, titleText: "Set up your Profile",
-      removeBackButton: true ),
+      appBar: header(context,
+          titleText: "Set up your profile", removeBackButton: true),
       body: ListView(
         children: <Widget>[
           Container(
@@ -67,7 +67,7 @@ class _CreateAccountState extends State<CreateAccount> {
                           border: OutlineInputBorder(),
                           labelText: "Username",
                           labelStyle: TextStyle(fontSize: 15.0),
-                          hintText: "Must have at least 3 characters",
+                          hintText: "Must be at least 3 characters",
                         ),
                       ),
                     ),
@@ -92,7 +92,7 @@ class _CreateAccountState extends State<CreateAccount> {
                       ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           )

@@ -5,16 +5,16 @@ import 'package:fluttershare/widgets/post.dart';
 import 'package:fluttershare/widgets/progress.dart';
 
 class PostScreen extends StatelessWidget {
-  final String userId;
+  final String postUserId;
   final String postId;
 
-  PostScreen({this.userId, this.postId});
+  PostScreen({this.postUserId, this.postId});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: postsRef
-          .document(userId)
+          .document(postUserId)
           .collection('userPosts')
           .document(postId)
           .get(),

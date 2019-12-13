@@ -28,7 +28,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
     });
     return feedItems;
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,16 +56,18 @@ String activityItemText;
 class ActivityFeedItem extends StatelessWidget {
   final String username;
   final String userId;
+  final String postUserId;
   final String type; // 'like', 'follow', 'comment'
   final String mediaUrl;
   final String postId;
   final String userProfileImg;
   final String commentData;
   final Timestamp timestamp;
-
+ 
   ActivityFeedItem({
     this.username,
     this.userId,
+    this.postUserId,
     this.type,
     this.mediaUrl,
     this.postId,
@@ -73,11 +75,12 @@ class ActivityFeedItem extends StatelessWidget {
     this.commentData,
     this.timestamp,
   });
-
+ 
   factory ActivityFeedItem.fromDocument(DocumentSnapshot doc) {
     return ActivityFeedItem(
       username: doc['username'],
       userId: doc['userId'],
+      postUserId: currentUser.id,
       type: doc['type'],
       postId: doc['postId'],
       userProfileImg: doc['userProfileImg'],
@@ -86,19 +89,19 @@ class ActivityFeedItem extends StatelessWidget {
       mediaUrl: doc['mediaUrl'],
     );
   }
-
+ 
   showPost(context) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PostScreen(
+          postUserId: postUserId,
           postId: postId,
-          userId: userId,
         ),
       ),
     );
   }
-
+  
   configureMediaPreview(context) {
     if (type == "like" || type == 'comment') {
       mediaPreview = GestureDetector(
@@ -186,3 +189,4 @@ showProfile(BuildContext context, {String profileId}) {
     ),
   );
 }
+
