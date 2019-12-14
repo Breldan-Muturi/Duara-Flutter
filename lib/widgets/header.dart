@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluttershare/pages/add_place_screen.dart';
 import 'package:fluttershare/pages/place_list_screen.dart';
 
 AppBar header(context,
-    {bool isAppTitle = false, String titleText, removeBackButton = false, addPlaceButton = false}) {
+    {bool isAppTitle = false, String titleText, removeBackButton = false, placeListButton = false, addPlaceButton = false}) {
   return AppBar(
     automaticallyImplyLeading: removeBackButton ? false : true,   
     title: Text(
@@ -16,9 +17,15 @@ AppBar header(context,
     ),
     centerTitle: true,
     actions: <Widget>[
-      addPlaceButton ?
+      placeListButton ?
         IconButton(
           onPressed: () => openPlacesList(context),
+          icon: Icon(Icons.map),
+          color: Theme.of(context).primaryColor
+        ): Text(''),
+      addPlaceButton ?
+        IconButton(
+          onPressed: () => openAddPlaces(context),
           icon: Icon(Icons.add_location),
           color: Theme.of(context).primaryColor
         ): Text(''),
@@ -32,4 +39,11 @@ AppBar header(context,
         context,
         MaterialPageRoute(
             builder: (context) => PlacesListScreen()));
+  }
+
+  openAddPlaces(context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AddPlaceScreen()));
   }
