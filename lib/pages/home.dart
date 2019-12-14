@@ -171,6 +171,7 @@ class _HomeState extends State<Home> {
       key: _scaffoldKey,
       body: PageView(
         children: <Widget>[
+          
           Timeline(currentUser: currentUser),
           ActivityFeed(),
           Upload(currentUser: currentUser),
