@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttershare/pages/home.dart';
-import 'package:provider/provider.dart';
-import './providers/great_places.dart';
 
 void main() {
   Firestore.instance.settings(timestampsInSnapshotsEnabled: true).then((_) {
@@ -16,9 +14,7 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: GreatPlaces(),
-          child: MaterialApp(
+    return MaterialApp(
         title: 'FlutterShare',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
@@ -26,7 +22,6 @@ class MyApp extends StatelessWidget {
           accentColor: Colors.teal,
         ),
         home: Home(),
-      ),
-    );
+      );    
   }
 }

@@ -119,7 +119,7 @@ class _TimelineState extends State<Timeline> {
   @override
   Widget build(context) {
     return Scaffold(
-      appBar: header(context, titleText: "Home", placeListButton: true, addPlaceButton: true),
+      appBar: header(context, isAppTitle: true),
       body: RefreshIndicator( 
         onRefresh: () => getTimeline(),
         child: buildTimeline(),
