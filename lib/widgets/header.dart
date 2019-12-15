@@ -3,9 +3,9 @@ import 'package:fluttershare/pages/add_place_screen.dart';
 import 'package:fluttershare/pages/place_list_screen.dart';
 
 AppBar header(context,
-    {bool isAppTitle = false, String titleText, removeBackButton = false, placeListButton = false, addPlaceButton = false}) {
+    {bool isAppTitle = false, String titleText, removeBackButton = false, placeListButton = false, addPlaceButton = false, addProfileButton = false}) {
   return AppBar(
-    automaticallyImplyLeading: removeBackButton ? false : true,   
+    automaticallyImplyLeading: removeBackButton ? false : true,
     title: Text(
       isAppTitle ? "FlutterShare" : titleText,
       style: TextStyle(
@@ -47,3 +47,4 @@ AppBar header(context,
         MaterialPageRoute(
             builder: (context) => AddPlaceScreen()));
   }
+

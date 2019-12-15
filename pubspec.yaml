@@ -14,7 +14,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
@@ -30,8 +30,9 @@ dependencies:
   image: ^2.0.7
   animator: 1.0.0+3
   cupertino_icons: ^0.1.2
-  path_provider: ^0.5.0+1
+  path_provider: ^1.1.0
   path: ^1.6.2
+  sqflite: ^1.1.8
   firebase_messaging: ^4.0.0+1
   timeago: 2.0.17
   cached_network_image:
