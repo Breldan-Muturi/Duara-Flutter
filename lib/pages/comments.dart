@@ -137,11 +137,32 @@ class Comment extends StatelessWidget {
     return Column(
       children: <Widget>[
         ListTile(
-          title: Text(comment),
+          title: RichText(
+              overflow: TextOverflow.ellipsis,
+              text: TextSpan(
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: username,
+                      style: TextStyle(
+                        fontFamily: "Signatra",
+                        fontSize: 26.0,
+                        ),
+                    ),
+                    TextSpan(
+                      text: '\n'+comment,
+                      style: TextStyle(fontSize: 20.0,)
+                    ),
+                  ]),
+            ),
           leading: CircleAvatar(
             backgroundImage: CachedNetworkImageProvider(avatarUrl),
           ),
-          subtitle: Text(timeago.format(timestamp.toDate())),
+          subtitle: Text(
+            timeago.format(timestamp.toDate()),            
+            style: TextStyle(fontSize: 14.0,)),
         ),
         Divider(),
       ],

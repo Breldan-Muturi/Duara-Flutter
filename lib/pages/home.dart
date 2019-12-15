@@ -170,8 +170,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       key: _scaffoldKey,
       body: PageView(
-        children: <Widget>[
-          
+        children: <Widget>[          
           Timeline(currentUser: currentUser),
           ActivityFeed(),
           Upload(currentUser: currentUser),
@@ -224,7 +223,7 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
-              'FlutterShare',
+              'Duara',
               style: TextStyle(
                 fontFamily: "Signatra",
                 fontSize: 90.0,
